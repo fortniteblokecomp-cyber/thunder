@@ -1,0 +1,10 @@
+{
+  "title": "Example game",
+  "tabs": ["Main", "Visuals"],
+  "toggles": {
+    "Example": false
+  },
+  "sliders": {
+    "Distance": 100
+  }
+}
