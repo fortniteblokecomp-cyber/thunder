@@ -1,10 +1,17 @@
 {
-  "title": "Example game",
-  "tabs": ["Main", "Visuals"],
+  "title": "sht script",
+
+  "tabs": ["Main", "Visuals", "Fun"],
+
   "toggles": {
-    "Example": false
+    "Example": {
+        
+    }
   },
+
   "sliders": {
-    "Distance": 100
+    "aura": {
+        
+    }
   }
 }
