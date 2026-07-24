@@ -85,38 +85,37 @@ function thunder:render()
     -- Create window using full Luna config
     bin.interface = luna:CreateWindow(self.window)
 
-    -- Create tabs
+    -- Create tabs (NEW LUNA API)
     for _, tabName in ipairs(self.tabs) do
-        self.tabs[tabName] = bin.interface:CreateTab(tabName)
+        self.tabs[tabName] = bin.interface:CreateTab({
+            Name = tabName,
+            Icon = "view_in_ar",
+            ImageSource = "Material",
+            ShowTitle = true
+        })
     end
 
-    -- Create toggles
+    -- Create toggles (NEW LUNA API)
     for toggleName, data in pairs(self.toggles) do
         local tab = self.tabs[data.tab]
         if tab then
             tab:CreateToggle({
                 Name = toggleName,
-                Default = data.default or false,
-                Callback = function(state)
-                    print(toggleName, state)
-                end
-            })
+                CurrentValue = data.default or false
+            }, toggleName)
         end
     end
 
-    -- Create sliders
+    -- Create sliders (NEW LUNA API)
     for sliderName, data in pairs(self.sliders) do
         local tab = self.tabs[data.tab]
         if tab then
             tab:CreateSlider({
                 Name = sliderName,
-                Min = data.min,
-                Max = data.max,
-                Default = data.default or data.min,
-                Callback = function(value)
-                    print(sliderName, value)
-                end
-            })
+                Range = {data.min, data.max},
+                Increment = 1,
+                CurrentValue = data.default or data.min
+            }, sliderName)
         end
     end
 end
