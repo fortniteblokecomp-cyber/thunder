@@ -17,22 +17,43 @@ end
 
 -- Load config from URL
 function thunder:loadConfig(url)
+    print("Thunder DEBUG: Fetching URL ->", url)
+
     local ok, body = pcall(function()
         return game:HttpGet(url)
     end)
 
-    assert(ok, "Failed to fetch config")
+    print("Thunder DEBUG: HTTP ok =", ok)
+    print("Thunder DEBUG: HTTP body =", body)
+
+    if not ok then
+        warn("Thunder DEBUG: HTTP request failed")
+        error("Failed to fetch config")
+    end
 
     local decodeOk, config = pcall(decodeConfig, body)
-    assert(decodeOk, "Invalid config JSON")
+
+    print("Thunder DEBUG: decodeOk =", decodeOk)
+    print("Thunder DEBUG: decoded config =", config)
+
+    if not decodeOk then
+        warn("Thunder DEBUG: JSON decode failed")
+        error("Invalid config JSON")
+    end
 
     self.config = config
     self.tabs = config.tabs or {}
     self.toggles = config.toggles or {}
     self.sliders = config.sliders or {}
 
+    print("Thunder DEBUG: Config loaded successfully")
+    print("Thunder DEBUG: Tabs =", self.tabs)
+    print("Thunder DEBUG: Toggles =", self.toggles)
+    print("Thunder DEBUG: Sliders =", self.sliders)
+
     return config
 end
+
 
 
 -- Load config based on placeId
