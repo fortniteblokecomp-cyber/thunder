@@ -9,6 +9,7 @@ export type Config = {
 	[string]: any;
 }
 
+
 const scriptBase = {}
 
 -- Private
