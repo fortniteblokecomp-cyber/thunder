@@ -8,17 +8,14 @@ local bin = {
     interface = nil
 }
 
--- Generic HTTP getter (executor first, then fallback)
+-- Executor-friendly HTTP
 local function httpGet(url)
     if syn and syn.request then
-        local res = syn.request({Url = url, Method = "GET"})
-        return res.Body
+        return syn.request({Url = url, Method = "GET"}).Body
     elseif http_request then
-        local res = http_request({Url = url, Method = "GET"})
-        return res.Body
+        return http_request({Url = url, Method = "GET"}).Body
     elseif request then
-        local res = request({Url = url, Method = "GET"})
-        return res.Body
+        return request({Url = url, Method = "GET"}).Body
     else
         return game:HttpGet(url)
     end
@@ -26,9 +23,7 @@ end
 
 -- Decode JSON safely
 local function decodeConfig(body)
-    local decoded = HttpService:JSONDecode(body)
-    assert(type(decoded) == "table", "Invalid JSON config")
-    return decoded
+    return HttpService:JSONDecode(body)
 end
 
 -- Load config from URL
@@ -39,21 +34,19 @@ function thunder:loadConfig(url)
         return httpGet(url)
     end)
 
-    print("Thunder DEBUG: HTTP ok =", ok)
     if not ok then
-        warn("Thunder DEBUG: HTTP request failed:", body)
+        warn("Thunder DEBUG: HTTP failed:", body)
         error("Failed to fetch config")
     end
 
     local decodeOk, config = pcall(decodeConfig, body)
-    print("Thunder DEBUG: decodeOk =", decodeOk)
-
     if not decodeOk then
         warn("Thunder DEBUG: JSON decode failed:", config)
         error("Invalid config JSON")
     end
 
     self.config = config
+    self.window = config.window or {}
     self.tabs = config.tabs or {}
     self.toggles = config.toggles or {}
     self.sliders = config.sliders or {}
@@ -64,25 +57,18 @@ end
 
 -- Load config based on placeId
 function thunder:loadGameConfig(baseUrl, placeId)
-    print("Thunder DEBUG: loadGameConfig called")
-    print("Thunder DEBUG: baseUrl =", baseUrl)
-    print("Thunder DEBUG: placeId =", placeId)
-
     local url = string.format("%s/%d.json", baseUrl, placeId)
-    print("Thunder DEBUG: Final URL =", url)
-
     return self:loadConfig(url)
 end
 
 -- Constructor
 function thunder.new()
     local self = setmetatable({}, thunder)
-
-    self.dataBase = {}
-    self.tasks = {}
-    self.tabs = {}
     self.config = {}
-
+    self.window = {}
+    self.tabs = {}
+    self.toggles = {}
+    self.sliders = {}
     return self
 end
 
@@ -96,9 +82,8 @@ function thunder:render()
     local luna = bin.luna
     assert(luna, "Luna UI library not loaded")
 
-    bin.interface = luna:CreateWindow({
-        Name = self.config.title or "Thunder"
-    })
+    -- Create window using full Luna config
+    bin.interface = luna:CreateWindow(self.window)
 
     -- Create tabs
     for _, tabName in ipairs(self.tabs) do
@@ -134,20 +119,6 @@ function thunder:render()
             })
         end
     end
-end
-
--- Cleanup
-function thunder:cleanup()
-    for _, task in ipairs(self.tasks) do
-        if task.Connected then
-            task:Disconnect()
-        end
-    end
-
-    table.clear(self.tasks)
-    table.clear(bin)
-
-    return setmetatable(self, nil)
 end
 
 return thunder

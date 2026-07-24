@@ -1,49 +1,52 @@
 {
-    "title": "Thunder Hub",
+    "window": {
+        "Name": "Thunder Hub",
+        "Subtitle": "Powered by Luna",
+        "LogoID": null,
+        "LoadingEnabled": true,
+        "LoadingTitle": "Thunder Booting",
+        "LoadingSubtitle": "Loading UI...",
+
+        "ConfigSettings": {
+            "RootFolder": null,
+            "ConfigFolder": "ThunderHub"
+        },
+
+        "KeySystem": false,
+        "KeySettings": {
+            "Title": "Thunder Key",
+            "Subtitle": "Key System",
+            "Note": "",
+            "SaveInRoot": false,
+            "SaveKey": true,
+            "Key": [],
+            "SecondAction": {
+                "Enabled": false,
+                "Type": "Link",
+                "Parameter": ""
+            }
+        }
+    },
+
     "tabs": [
         "Main",
-        "Combat",
         "Visuals",
         "Fun"
     ],
 
     "toggles": {
-        "Auto Click": {
+        "Example Toggle": {
             "tab": "Main",
-            "default": true
-        },
-        "Kill Aura": {
-            "tab": "Combat",
-            "default": false
-        },
-        "ESP": {
-            "tab": "Visuals",
-            "default": true
-        },
-        "Rainbow Mode": {
-            "tab": "Fun",
             "default": false
         }
     },
 
     "sliders": {
         "Aura Range": {
-            "tab": "Combat",
-            "min": 5,
+            "tab": "Fun",
+            "min": 1,
             "max": 50,
-            "default": 20
-        },
-        "WalkSpeed": {
-            "tab": "Main",
-            "min": 16,
-            "max": 200,
-            "default": 50
-        },
-        "FOV": {
-            "tab": "Visuals",
-            "min": 70,
-            "max": 120,
-            "default": 90
+            "default": 10
         }
     }
 }
