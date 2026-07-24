@@ -18,7 +18,7 @@ end
 -- Load config from URL
 function thunder:loadConfig(url)
     print("Thunder DEBUG: Fetching URL ->", url)
-
+	warn("yooo")
     local ok, body = pcall(function()
         return game:HttpGet(url)
     end)
