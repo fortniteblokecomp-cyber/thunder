@@ -1,21 +1,50 @@
 {
-  "title": "sht script",
+    "title": "Thunder Hub",
 
-  "tabs": ["Main", "Visuals", "Fun"],
+    "tabs": [
+        "Main",
+        "Combat",
+        "Visuals",
+        "Fun"
+    ],
 
-  "toggles": {
-    "Example Toggle": {
-      "tab": "Main",
-      "default": false
+    "toggles": {
+        "Auto Click": {
+            "tab": "Main",
+            "default": true
+        },
+        "Kill Aura": {
+            "tab": "Combat",
+            "default": false
+        },
+        "ESP": {
+            "tab": "Visuals",
+            "default": true
+        },
+        "Rainbow Mode": {
+            "tab": "Fun",
+            "default": false
+        }
+    },
+
+    "sliders": {
+        "Aura Range": {
+            "tab": "Combat",
+            "min": 5,
+            "max": 50,
+            "default": 20
+        },
+        "WalkSpeed": {
+            "tab": "Main",
+            "min": 16,
+            "max": 200,
+            "default": 50
+        },
+        "FOV": {
+            "tab": "Visuals",
+            "min": 70,
+            "max": 120,
+            "default": 90
+        }
     }
-  },
-
-  "sliders": {
-    "Aura Range": {
-      "tab": "Fun",
-      "min": 1,
-      "max": 50,
-      "default": 10
-    }
-  }
 }

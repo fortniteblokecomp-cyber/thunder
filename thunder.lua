@@ -8,6 +8,22 @@ local bin = {
     interface = nil
 }
 
+-- Generic HTTP getter (executor first, then fallback)
+local function httpGet(url)
+    if syn and syn.request then
+        local res = syn.request({Url = url, Method = "GET"})
+        return res.Body
+    elseif http_request then
+        local res = http_request({Url = url, Method = "GET"})
+        return res.Body
+    elseif request then
+        local res = request({Url = url, Method = "GET"})
+        return res.Body
+    else
+        return game:HttpGet(url)
+    end
+end
+
 -- Decode JSON safely
 local function decodeConfig(body)
     local decoded = HttpService:JSONDecode(body)
@@ -18,26 +34,22 @@ end
 -- Load config from URL
 function thunder:loadConfig(url)
     print("Thunder DEBUG: Fetching URL ->", url)
-	warn("yooo")
+
     local ok, body = pcall(function()
-        return game:HttpGet(url)
+        return httpGet(url)
     end)
 
     print("Thunder DEBUG: HTTP ok =", ok)
-    print("Thunder DEBUG: HTTP body =", body)
-
     if not ok then
-        warn("Thunder DEBUG: HTTP request failed")
+        warn("Thunder DEBUG: HTTP request failed:", body)
         error("Failed to fetch config")
     end
 
     local decodeOk, config = pcall(decodeConfig, body)
-
     print("Thunder DEBUG: decodeOk =", decodeOk)
-    print("Thunder DEBUG: decoded config =", config)
 
     if not decodeOk then
-        warn("Thunder DEBUG: JSON decode failed")
+        warn("Thunder DEBUG: JSON decode failed:", config)
         error("Invalid config JSON")
     end
 
@@ -47,18 +59,18 @@ function thunder:loadConfig(url)
     self.sliders = config.sliders or {}
 
     print("Thunder DEBUG: Config loaded successfully")
-    print("Thunder DEBUG: Tabs =", self.tabs)
-    print("Thunder DEBUG: Toggles =", self.toggles)
-    print("Thunder DEBUG: Sliders =", self.sliders)
-
     return config
 end
 
-
-
 -- Load config based on placeId
 function thunder:loadGameConfig(baseUrl, placeId)
+    print("Thunder DEBUG: loadGameConfig called")
+    print("Thunder DEBUG: baseUrl =", baseUrl)
+    print("Thunder DEBUG: placeId =", placeId)
+
     local url = string.format("%s/%d.json", baseUrl, placeId)
+    print("Thunder DEBUG: Final URL =", url)
+
     return self:loadConfig(url)
 end
 
