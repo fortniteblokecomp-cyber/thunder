@@ -1,59 +1,54 @@
 local HttpService = game:GetService("HttpService")
 
 export type Config = {
-	title: string?;
-	tabs: {any};
-	toggles: {[string]: {any}};
-	sliders: {[string]: {any}};
-	
-	[string]: any;
+    title: string?;
+    tabs: {string}?;
+    toggles: {[string]: {tab: string, default: boolean}?};
+    sliders: {[string]: {tab: string, min: number, max: number, default: number}?};
+    [string]: any;
 }
 
+local scriptBase = {}
+scriptBase.__index = scriptBase
 
-const scriptBase = {}
-
--- Private
-const function decodeConfig(body: string) : Config
-	local _decoded = HttpService:JSONDecode(body);
-	assert(type(_decoded) == "table", "game config must be a json Object");
-	
-	return _decoded:: string;
+-- Decode JSON safely
+local function decodeConfig(body: string): Config
+    local decoded = HttpService:JSONDecode(body)
+    assert(type(decoded) == "table", "Config must be a JSON object")
+    return decoded
 end
 
--- Public
-
-function scriptBase:addTask(base, task: RBXScriptConnection)
-	assert(task.Connected, "cannot register and disconnected task");
-	
-	table.insert(base.tasks, task);
-	
-	return task;
+-- Register a task
+function scriptBase:addTask(task: RBXScriptConnection)
+    if task and task.Connected then
+        table.insert(self.tasks, task)
+    end
+    return task
 end
 
-function scriptBase:changeTab(base, newTab)
-	
+-- Load config from URL
+function scriptBase:loadConfig(url: string)
+    local ok, body = pcall(function()
+        return HttpService:GetAsync(url)
+    end)
+
+    assert(ok, "Failed to fetch config")
+
+    local decodeOk, config = pcall(decodeConfig, body)
+    assert(decodeOk, "Invalid config JSON")
+
+    self.config = config
+    self.tabs = config.tabs or {}
+    self.toggles = config.toggles or {}
+    self.sliders = config.sliders or {}
+
+    return config
 end
 
-function scriptBase:toggle(base, _instance)
-	
+-- Load config based on placeId
+function scriptBase:loadGameConfig(baseUrl: string, placeId: number)
+    local url = string.format("%s/%d.json", baseUrl, placeId)
+    return self:loadConfig(url)
 end
-
-function scriptBase:loadConfig(configBaseUrl: string)
-	local ok, bodyOrError = pcall(function()
-		return HttpService:GetAsync(configBaseUrl, true);
-	end)
-	assert(ok, "unable to fetch game config");
-	
-	local decodeOk, configOrError = pcall(decodeConfig, bodyOrError);
-	assert(decodeOk, "invalid to fetch game config");
-	
-	base.config = configOrError;
-	base.tabs = configOrError.tabs or {};
-	base.toggles = configOrError.toggles or {};
-	base.sliders = configOrError.sliders or {};
-	
-	return configOrError
-end
-
 
 return scriptBase

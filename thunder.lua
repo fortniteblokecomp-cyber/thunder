@@ -1,76 +1,90 @@
--- Services
-
 local HttpService = game:GetService("HttpService")
 
-warn("yoski")
+local scriptBase = loadstring(game:HttpGet("https://raw.githubusercontent.com/fortniteblokecomp-cyber/thunder/main/scriptBase.lua"))()
 
------------------------------------------------------
-
-local scriptBase = loadstring(game:HttpGet("https://github.com/fortniteblokecomp-cyber/thunder/blob/main/scriptBase.lua"))()
-warn(scriptBase)
-
--------------------------------------------------------
-
-
-local thunder = setmetatable({}, {__index = scriptBase})
-
+local thunder = {}
+thunder.__index = thunder
 
 local bin = {
-	lunaGit = nil;
+    luna = nil,
+    interface = nil
 }
 
-
-
+-- Constructor
 function thunder.new()
-	local self = setmetatable({}, {__index = thunder});
-	
-	self.dataBase = {};
-	
-	self.toggles = {};
-	self.sliders = {};
-	
-	self.tasks = {} :: {RBXScriptConnection}
-	
-	self.tabs = {}
-	self.config = {}
-	
-	return self 
+    local self = setmetatable({}, thunder)
+
+    self.dataBase = {}
+    self.tasks = {}
+    self.tabs = {}
+    self.config = {}
+
+    return self
 end
 
-
-
-
+-- Load Luna UI Library
 function thunder:mount()
-	bin.lunaGit = loadstring(game:HttpGet("https://raw.nebulasoftworks.xyz/luna", true))()
+    bin.luna = loadstring(game:HttpGet("https://raw.nebulasoftworks.xyz/luna"))()
 end
 
+-- Render UI
 function thunder:render()
-	local git = bin.lunaGit
-	
-	warn(git)
-	self:addTask(self, task.spawn(function()
-		bin["interface"] = git:CreateWindow({
-			Name = "thunder"
-		})
-	end))
+    local luna = bin.luna
+    assert(luna, "Luna UI library not loaded")
 
-end;
+    -- Create main window
+    bin.interface = luna:CreateWindow({
+        Name = self.config.title or "Thunder"
+    })
 
+    -- Create tabs
+    for _, tabName in ipairs(self.tabs) do
+        self.tabs[tabName] = bin.interface:CreateTab(tabName)
+    end
 
-function scriptBase:loadGameConfig(configBaseUrl: string, placeId: number)
-	const configUrl = `{configBaseUrl}/{placeId}.json`;
+    -- Create toggles
+    for toggleName, data in pairs(self.toggles) do
+        local tab = self.tabs[data.tab]
+        if tab then
+            tab:CreateToggle({
+                Name = toggleName,
+                Default = data.default or false,
+                Callback = function(state)
+                    print(toggleName, state)
+                end
+            })
+        end
+    end
 
-	return self:loadConfig(configUrl)
+    -- Create sliders
+    for sliderName, data in pairs(self.sliders) do
+        local tab = self.tabs[data.tab]
+        if tab then
+            tab:CreateSlider({
+                Name = sliderName,
+                Min = data.min,
+                Max = data.max,
+                Default = data.default or data.min,
+                Callback = function(value)
+                    print(sliderName, value)
+                end
+            })
+        end
+    end
 end
 
+-- Cleanup
 function thunder:cleanup()
-	for _, task in self.tasks do
-		task:Disconnect()
-	end
-	
-	table.clear(self.tasks)
-	table.clear(self.bin)
-	return setmetatable(self, nil)
+    for _, task in ipairs(self.tasks) do
+        if task.Connected then
+            task:Disconnect()
+        end
+    end
+
+    table.clear(self.tasks)
+    table.clear(bin)
+
+    return setmetatable(self, nil)
 end
 
-return thunder;
+return thunder
