@@ -1,6 +1,6 @@
 local HttpService = game:GetService("HttpService")
 
-local scriptBase = loadstring(game:HttpGet("https://raw.githubusercontent.com/fortniteblokecomp-cyber/thunder/main/scriptBase.lua"))()
+--local scriptBase = loadstring(game:HttpGet("https://raw.githubusercontent.com/fortniteblokecomp-cyber/thunder/main/scriptBase.lua"))()
 
 local thunder = {}
 thunder.__index = thunder
@@ -9,6 +9,25 @@ local bin = {
     luna = nil,
     interface = nil
 }
+
+-- Private
+const function loadConfig(url: string)
+    local ok, body = pcall(function()
+        return HttpService:GetAsync(url)
+    end)
+
+    assert(ok, "Failed to fetch config")
+
+    local decodeOk, config = pcall(decodeConfig, body)
+    assert(decodeOk, "Invalid config JSON")
+
+    self.config = config
+    self.tabs = config.tabs or {}
+    self.toggles = config.toggles or {}
+    self.sliders = config.sliders or {}
+
+    return config
+end
 
 -- Constructor
 function thunder.new()
@@ -73,7 +92,8 @@ end
 
 
 function thunder:loadGameConfig(baseUrl: string, placeId: number)
-    return scriptBase:loadGameConfig(baseUrl, placeId)
+     local url = string.format("%s/%d.json", baseUrl, placeId)
+    return loadConfig(url)
 end
 
 
