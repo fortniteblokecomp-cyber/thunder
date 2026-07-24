@@ -38,6 +38,9 @@ function thunder.new()
     self.tabs = {}
     self.config = {}
 
+
+	warn(self)
+
     return self
 end
 
@@ -48,6 +51,7 @@ end
 
 -- Render UI
 function thunder:render()
+	warn("yoooooooooooooooooooooo")
     local luna = bin.luna
     assert(luna, "Luna UI library not loaded")
 
@@ -92,7 +96,7 @@ end
 
 
 function thunder:loadGameConfig(baseUrl: string, placeId: number)
-     local url = string.format("%s/%d.json", baseUrl, placeId)
+    local url = string.format("%s/%d.json", baseUrl, placeId)
     return loadConfig(url)
 end
 
