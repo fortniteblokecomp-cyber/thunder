@@ -6,12 +6,13 @@ local HttpService = game:GetService("HttpService")
 
 -----------------------------------------------------
 
-const scriptBase = loadstring(game:HttpGet("https://github.com/fortniteblokecomp-cyber/thunder/blob/main/scriptBase.lua", true))()
+local scriptBase = loadstring(game:HttpGet("https://github.com/fortniteblokecomp-cyber/thunder/blob/main/scriptBase.lua", true))()
+warn(scriptBase)
 
 -------------------------------------------------------
 
 
-const thunder = setmetatable({}, {__index = scriptBase})
+local thunder = setmetatable({}, {__index = scriptBase})
 
 
 local bin = {
