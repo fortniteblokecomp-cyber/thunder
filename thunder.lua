@@ -22,7 +22,7 @@ function thunder.new()
     return self
 end
 
--- Load Luna UI Library
+
 function thunder:mount()
     bin.luna = loadstring(game:HttpGet("https://raw.nebulasoftworks.xyz/luna"))()
 end
@@ -32,17 +32,15 @@ function thunder:render()
     local luna = bin.luna
     assert(luna, "Luna UI library not loaded")
 
-    -- Create main window
     bin.interface = luna:CreateWindow({
         Name = self.config.title or "Thunder"
     })
 
-    -- Create tabs
     for _, tabName in ipairs(self.tabs) do
         self.tabs[tabName] = bin.interface:CreateTab(tabName)
     end
 
-    -- Create toggles
+   
     for toggleName, data in pairs(self.toggles) do
         local tab = self.tabs[data.tab]
         if tab then
@@ -56,7 +54,7 @@ function thunder:render()
         end
     end
 
-    -- Create sliders
+
     for sliderName, data in pairs(self.sliders) do
         local tab = self.tabs[data.tab]
         if tab then
@@ -73,7 +71,7 @@ function thunder:render()
     end
 end
 
--- Cleanup
+
 function thunder:cleanup()
     for _, task in ipairs(self.tasks) do
         if task.Connected then
