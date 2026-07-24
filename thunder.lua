@@ -6,7 +6,7 @@ local HttpService = game:GetService("HttpService")
 
 -----------------------------------------------------
 
-local scriptBase = loadstring(game:HttpGet("https://github.com/fortniteblokecomp-cyber/thunder/blob/main/scriptBase.lua", true))()
+local scriptBase = loadstring(game:HttpGet("https://github.com/fortniteblokecomp-cyber/thunder/blob/main/scriptBase.lua"))()
 warn(scriptBase)
 
 -------------------------------------------------------
