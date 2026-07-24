@@ -1,7 +1,5 @@
 local HttpService = game:GetService("HttpService")
 
---local scriptBase = loadstring(game:HttpGet("https://raw.githubusercontent.com/fortniteblokecomp-cyber/thunder/main/scriptBase.lua"))()
-
 local thunder = {}
 thunder.__index = thunder
 
@@ -10,8 +8,15 @@ local bin = {
     interface = nil
 }
 
--- Private
-const function loadConfig(url: string)
+-- Decode JSON safely
+local function decodeConfig(body)
+    local decoded = HttpService:JSONDecode(body)
+    assert(type(decoded) == "table", "Invalid JSON config")
+    return decoded
+end
+
+-- Load config from URL
+function thunder:loadConfig(url)
     local ok, body = pcall(function()
         return HttpService:GetAsync(url)
     end)
@@ -29,6 +34,12 @@ const function loadConfig(url: string)
     return config
 end
 
+-- Load config based on placeId
+function thunder:loadGameConfig(baseUrl, placeId)
+    local url = string.format("%s/%d.json", baseUrl, placeId)
+    return self:loadConfig(url)
+end
+
 -- Constructor
 function thunder.new()
     local self = setmetatable({}, thunder)
@@ -38,20 +49,16 @@ function thunder.new()
     self.tabs = {}
     self.config = {}
 
-
-	warn(self)
-
     return self
 end
 
-
+-- Load Luna UI Library
 function thunder:mount()
     bin.luna = loadstring(game:HttpGet("https://raw.nebulasoftworks.xyz/luna"))()
 end
 
 -- Render UI
 function thunder:render()
-	warn("yoooooooooooooooooooooo")
     local luna = bin.luna
     assert(luna, "Luna UI library not loaded")
 
@@ -59,11 +66,12 @@ function thunder:render()
         Name = self.config.title or "Thunder"
     })
 
+    -- Create tabs
     for _, tabName in ipairs(self.tabs) do
         self.tabs[tabName] = bin.interface:CreateTab(tabName)
     end
 
-   
+    -- Create toggles
     for toggleName, data in pairs(self.toggles) do
         local tab = self.tabs[data.tab]
         if tab then
@@ -77,7 +85,7 @@ function thunder:render()
         end
     end
 
-
+    -- Create sliders
     for sliderName, data in pairs(self.sliders) do
         local tab = self.tabs[data.tab]
         if tab then
@@ -94,13 +102,7 @@ function thunder:render()
     end
 end
 
-
-function thunder:loadGameConfig(baseUrl: string, placeId: number)
-    local url = string.format("%s/%d.json", baseUrl, placeId)
-    return loadConfig(url)
-end
-
-
+-- Cleanup
 function thunder:cleanup()
     for _, task in ipairs(self.tasks) do
         if task.Connected then
