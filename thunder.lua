@@ -72,6 +72,11 @@ function thunder:render()
 end
 
 
+function thunder:loadGameConfig(baseUrl: string, placeId: number)
+    return scriptBase:loadGameConfig(baseUrl, placeId)
+end
+
+
 function thunder:cleanup()
     for _, task in ipairs(self.tasks) do
         if task.Connected then
