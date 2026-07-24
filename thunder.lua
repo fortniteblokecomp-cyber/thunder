@@ -18,7 +18,7 @@ end
 -- Load config from URL
 function thunder:loadConfig(url)
     local ok, body = pcall(function()
-        return HttpService:GetAsync(url)
+        return game:HttpGet(url)
     end)
 
     assert(ok, "Failed to fetch config")
@@ -33,6 +33,7 @@ function thunder:loadConfig(url)
 
     return config
 end
+
 
 -- Load config based on placeId
 function thunder:loadGameConfig(baseUrl, placeId)
