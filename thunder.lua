@@ -37,7 +37,7 @@ end
 -- Load config based on placeId
 function thunder:loadGameConfig(baseUrl, placeId)
     local url = string.format("%s/%d.json", baseUrl, placeId)
-    return thunder:loadConfig(url)
+    return self:loadConfig(url)
 end
 
 -- Constructor
